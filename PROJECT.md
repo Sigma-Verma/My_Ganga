@@ -12,6 +12,7 @@ This is a simple Ganga job that executes on a Local backend and prints "Hello, G
 ## **LHC.pdf "it" Counting Job**  
 
 ### **Description**  
+
 This task is handled by splitting it into three parts:  
 
 - **Splitting the LHC.pdf using a script**  
@@ -28,6 +29,7 @@ This task is handled by splitting it into three parts:
 
 
 ### **Workflow**  
+
 1. **Job 1 (J1) - Splitting LHC.pdf**  
    - Uses **split_pdf.py** to generate individual pages.  
 2. **Job 2 (J2) - Counting "it" in each page**  
@@ -37,10 +39,13 @@ This task is handled by splitting it into three parts:
 
 
 ### **Execution**  
+
 To run the job, execute:  
+
 ```sh
 ganga my_code/submit_jobs.py
 ```  
+
 This submits the jobs and waits for completion.  
 
 ### The output should look something like this
@@ -48,7 +53,8 @@ This submits the jobs and waits for completion.
 ![Output](images/output.png)
 
 
-### **File Structure**  
+### **File Structure** 
+
 ```
 My_Ganga/
 │── my_code/
@@ -64,6 +70,7 @@ My_Ganga/
 ## **Interfacing Ganga Job**
 
 ### **Description**
+
 This task is to demonstrate programmatic interaction with a Large Language Model (LLM) to generate and execute a Ganga job. The generated job will calculate an approximation of π using the accept-reject simulation method. The total number of simulations will be 1 million, split into 1000 subjobs, each performing 1000 simulations.
 
 ### **Workflow Execution**
@@ -250,13 +257,14 @@ This task is to demonstrate programmatic interaction with a Large Language Model
     management.
 
 #### **Step 4: Parsing the output code**
+
 Make 3 python files as follows with the code provided above.
  
     1. create_pi_job.py
     2. pi_merger.py
     3. pi_simulation.py
     
-**Make sure the job_id is set correctly** 
+**MAKE SURE THE JOB_ID IS SET CORRECTLY** 
 
 **MAKE SURE THE ADRESSES IN THE CODE ARE CORRECT**
 
@@ -278,10 +286,98 @@ Make 3 python files as follows with the code provided above.
 
   ![Running pi_merger.py in python ](images/Pi_merge.png)
 
-## **Current Status**
-- [x] LLM-based code generation tested with Ollama.
-- [x] Job submission, execution, and result aggregation working.
-- [x] Debugging and improvements made to dynamically set job IDs.
-- [ ] Automated test for execution success in progress.
+***
+
+## **LLM Django interfacing**
+
+### **Description**  
+
+This project involves creating a Django web application that interacts with a **local LLM (Large Language Model)** to answer user questions. The app:
+
+1.  Accept questions via **HTTP** (GET/POST)  
+2.  Used **_deepseek-coder-v2:latest_** via Ollama CLI
+3.  Return **LLM-generated responses** without maintaining chat history
+
+### **Usage**  
+
+1.  **Start the Django App**    
+    
+    Run the Django development server:  
+    ```bash
+    python manage.py runserver
+
+    ```
+
+2.  **Interact with the LLM API**   
+    
+    -   Using a **_Web Browser_** :
+        -   Open http://127.0.0.1:8000/chat/ in your browser.
+        -   Enter a question and get a response.
+
+    -   Using **curl (Command Line)** :
+
+        -   Send a question via **_curl_** :
+        
+        ```bash
+        curl -X POST http://127.0.0.1:8000/chat/query/ -H "Content-Type: application/json" -d
+        '{"question":"Inset your question here"}'
+
+         ```
+         
+        -   Expected response:
+        
+        ```json
+        {
+        "response": "LLM output response"
+        }
+        ```
+
+### **Demo**
+
+*Start the Django App*
+
+1.  **Using Web Browser**
+    
+    [Watch the full Demo](https://github.com/Sigma-Verma/My_Ganga/blob/main/images/LLM_chat_DEMO.webm)
+    
+    -   ![Demo_1](images/1.png)
+    -   ![Demo_2](images/2.png)
+    -   ![Demo_3](images/3.png)
+    -   ![Demo_4](images/4.png)
+    -   ![Demo_5](images/5.png)
+
+2.  **Using curl (Command Line)**
+    
+    [Watch the full Demo](https://github.com/Sigma-Verma/My_Ganga/blob/main/images/LLM_curl_DEMO.webm)
+
+    -   ![Demo_6](images/6.png)
+    -   ![Demo_7](images/7.png)
+
+### **Project Structure** 
+
+```
+ollama_django/
+│── chat/
+│   ├── templates/chat/index.html   # Frontend UI  
+│   ├── views.py                    # Backend logic  
+│   ├── urls.py                     # URL routing  
+│── ollama_django/
+│   ├── settings.py                 # Django settings  
+│── manage.py                       # Django entry point  
+
+```
+
+### **Possible Updates** 
+
+-   Add **conversation memory** to enable context-aware interactions.
+-   Enhance security by **implementing authentication and HTTPS**.
+-   **Improve UI** with a frontend framework.
+-   Support **multiple LLMs**, allowing users to choose different models.
+-   **Integrate a database** to store chat logs for future analysis.
+
+
+
+
+
 
 
