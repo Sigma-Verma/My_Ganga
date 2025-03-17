@@ -1,25 +1,45 @@
 import unittest
 import subprocess
-import os
+import time
 
 submit_script = "/home/uverma/Documents/code/My_Ganga/my_code/submit_jobs.py"
 
 
 class TestSubmitJobs(unittest.TestCase):
 
-    def test_submit_jobs(self):
+    def setUp(self):
+        """Ensure a clean Ganga job list before running tests."""
+        subprocess.run(["ganga", "-e", "jobs.clear()"], capture_output=True, text=True)
 
+    def test_submit_jobs(self):
+        
         """Test if submit_jobs.py successfully creates and runs Ganga jobs."""
         
-
         # Run the job submission script
-        result = subprocess.run(["ganga", submit_script], capture_output=True, text=True)
+        result = subprocess.run(
+            ["ganga", submit_script],
+            capture_output=True, text=True
+        )
 
-        # Print output or error of jobs
         print("Ganga Output:", result.stdout)
         print("Ganga Error:", result.stderr)
 
-        # Test will pass if "total occurrences of 'it'" occurs in the output
+        # Ensure the job was submitted
+        self.assertIn("submitted", result.stdout.lower(), "Job was not submitted.")
+
+        # Wait for jobs to complete
+        time.sleep(30)
+
+        # Check job list
+        ganga_jobs = subprocess.run(
+            ["ganga", "-e", "jobs"],
+            capture_output=True, text=True
+        )
+
+        print("🔹 Jobs Output:", ganga_jobs.stdout)
+        print("🔹 Jobs Error:", ganga_jobs.stderr)
+
+        # Verify if expected output exists
         self.assertIn("total occurrences of 'it'", result.stdout.lower(), "Expected output not found.")
 
 if __name__ == "__main__":
