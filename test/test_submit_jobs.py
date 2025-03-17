@@ -9,10 +9,10 @@ class TestSubmitJobs(unittest.TestCase):
 
     def setUp(self):
         """Ensure a clean Ganga job list before running tests."""
-        subprocess.run(["ganga", "-e", "jobs.clear()"], capture_output=True, text=True)
+        subprocess.run(["ganga", submit_script], input="y\n", text=True, capture_output=True)
 
     def test_submit_jobs(self):
-        
+
         """Test if submit_jobs.py successfully creates and runs Ganga jobs."""
         
         # Run the job submission script
