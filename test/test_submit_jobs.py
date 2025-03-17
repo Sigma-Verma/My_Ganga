@@ -1,8 +1,8 @@
 import unittest
 import subprocess
-import time
+import os , time
 
-submit_script = "/home/uverma/Documents/code/My_Ganga/my_code/submit_jobs.py"
+submit_script = os.path.join(os.path.dirname(__file__), "../my_code/submit_jobs.py")
 
 
 class TestSubmitJobs(unittest.TestCase):
