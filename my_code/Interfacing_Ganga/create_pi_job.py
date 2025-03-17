@@ -1,12 +1,11 @@
 from GangaCore.GPI import Job, ArgSplitter, Local, Executable
-import os
 
 # Number of subjobs and simulations per subjob
 num_subjobs = 1000
 sims_per_subjob = 1000
 
 # Path to the simulation script
-simulation_script = os.path.join(os.path.dirname(__file__), "../my_code/Interfacing_Ganga/pi_simulation.py")
+simulation_script = "/home/uverma/Documents/code/My_Ganga/my_code/Interfacing_Ganga/pi_simulation.py"
 
 # Create the job
 j = Job(
