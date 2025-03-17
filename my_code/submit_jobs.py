@@ -1,44 +1,49 @@
-import os
-import time
+import os, time
 from GangaCore.GPI import Job, ArgSplitter, Local, Executable
 
-# Paths
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-python_exe = os.path.join(BASE_DIR, "p_env", "bin", "python")
-split_pdf_script = os.path.join(BASE_DIR, "my_code", "split_pdf.py")
-lhc_pdf_path = os.path.join(BASE_DIR, "LHC.pdf")
-count_it_script = os.path.join(BASE_DIR, "my_code", "count_it.py")
-output_folder = os.path.join(BASE_DIR, "my_code", "output_pages")
+# this script takes takes the LHC.pdf file and splits it into single pdfs
 
 j1 = Job(
-    application=Executable(exe=python_exe, args=[split_pdf_script, lhc_pdf_path]),
-    backend=Local(),
-)
+    application=Executable(exe="/home/uverma/Documents/code/My_Ganga/p_env/bin/python",
+                           args=["/home/uverma/Documents/code/My_Ganga/my_code/split_pdf.py", "/home/uverma/Documents/code/My_Ganga/LHC.pdf"]),
+                           backend=Local())
 j1.submit()
+time.sleep(3)
 
-# Wait for Job 1 to complete
-while j1.status not in ["completed", "failed"]:
-    time.sleep(2)
 
-# --- Job 2: Count "it" in PDFs ---
-pdf_files = [os.path.join(output_folder, f) for f in os.listdir(output_folder)]
+# this ganga code takes in all the pdfs and runs the count_it.py on each of them n gives the total output at the end
+
+
+folder_path = "/home/uverma/Documents/code/My_Ganga/my_code/output_pages"
+
+
+pdf_files = []      # gets path of all the pdfs
+for f in os.listdir(folder_path):
+    pdf_files.append(os.path.join(folder_path, f))
 
 j2 = Job(
-    application=Executable(exe=python_exe),
+    application=Executable(
+        exe="/home/uverma/Documents/code/My_Ganga/p_env/bin/python"
+    ),
     backend=Local(),
-    splitter=ArgSplitter(args=[[count_it_script, pdf_file] for pdf_file in pdf_files]),
+    splitter=ArgSplitter(
+        args=[["/home/uverma/Documents/code/My_Ganga/my_code/count_it.py", pdf_file] for pdf_file in pdf_files]
+    )
 )
+
 j2.submit()
 
-# Wait for Job 2 completion
-while any(subjob.status not in ["completed", "failed"] for subjob in j2.subjobs):
-    time.sleep(2)
+print(f"Job {j2.id} submitted. Waiting for subjobs to complete...")
+time.sleep(5)   # ensure j2 gets completed
 
-# --- Collect Results ---
-total_count = sum(
-    int(open(os.path.join(subjob.outputdir, "stdout"), "r").read().strip())
-    for subjob in j2.subjobs
-)
+# add the result of all the sub_job
+total_count = 0
+for subjob in j2.subjobs:
+    subjob_output_path = os.path.join(subjob.outputdir, "stdout")
+    with open(subjob_output_path, "r") as f:
+        count = int(f.read().strip())  # Read the num from stdout file
+        total_count += count  # Add it to the total
 
 # Print the total count
+
 print(f"Total occurrences of 'it': {total_count}")

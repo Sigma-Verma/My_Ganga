@@ -1,7 +1,8 @@
 import unittest
 import subprocess
+import os
 
-interfacing_ganga_path = "/home/uverma/Documents/code/My_Ganga/my_code/Interfacing_Ganga/create_pi_job.py"
+interfacing_ganga_path = os.path.join(os.path.dirname(__file__), "../my_code/Interfacing_Ganga/create_pi_job.py")
 
 
 class TestInterfacingGangaExec(unittest.TestCase):
