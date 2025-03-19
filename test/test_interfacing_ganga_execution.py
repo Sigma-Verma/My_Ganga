@@ -1,26 +1,20 @@
-import unittest
-import subprocess
-import os
-
-interfacing_ganga_path = os.path.join(os.path.dirname(__file__), "../my_code/Interfacing_Ganga/create_pi_job.py")
+from ganga.GangaCore.testlib.GangaUnitTest import GangaUnitTest
 
 
-class TestInterfacingGangaExec(unittest.TestCase):
-
+class TestInterfacingGangaExec(GangaUnitTest):
     def test_ganga_job_submission(self):
+        from GangaCore.GPI import Job
+        from my_code.Interfacing_Ganga.create_pi_job import create_pi_job
+
+        j = create_pi_job()
         
-        """Test if the create_pi_job is attempted in Ganga."""
+        self.assertIsInstance(j, Job, "❌ ERROR: create_pi_job did not return a Job instance.")
 
-        # Run the create_pi_job script
-        result = subprocess.run(["ganga", interfacing_ganga_path], capture_output=True, text=True)
+        j.submit()
 
-        # Check Ganga job list
-        ganga_check = subprocess.run(["ganga", "--batch", "jobs"], capture_output=True, text=True)
-        ganga_output = ganga_check.stdout.lower()
+        self.assertTrue(j.status in ["submitted", "running", "completed"], "❌ ERROR: Job was not submitted properly.")
 
-        # Test will pass if command 'jobs' produces any output.
-        self.assertTrue("job" in ganga_output or "submitted" in result.stdout.lower(), 
-                        "Ganga job submission was not attempted.")
+        from ganga.GangaTest.Framework.utils import sleep_until_completed
+        self.assertTrue(sleep_until_completed(j, 60), "❌ ERROR: Timeout waiting for job to complete.")
 
-if __name__ == "__main__":
-    unittest.main()
+        self.assertEqual(j.status, "completed", "❌ ERROR: Job did not complete successfully.")
