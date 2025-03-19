@@ -8,7 +8,7 @@ class TestInterfacingGangaExec(GangaUnitTest):
 
         # Run the create_pi_job.py script and capture output
         result = subprocess.run(
-            ["python3", "my_code/Interfacing_Ganga/create_pi_job.py"],
+            ["ganga", "my_code/Interfacing_Ganga/create_pi_job.py"],
             capture_output=True,
             text=True
         )
