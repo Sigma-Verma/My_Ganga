@@ -13,7 +13,7 @@ simulation_script = os.path.join(BASE_DIR, "pi_simulation.py")
 # Create the job
 j = Job(
     application=Executable(
-        exe="sys.executable"
+        exe="ganga"
     ),
     backend=Local(),
     splitter=ArgSplitter(
